@@ -13,20 +13,25 @@ function transformStateWithClones(initialState, operations) {
   let currentState = { ...initialState };
 
   for (const operation of operations) {
-    if (operation.type === 'addProperties') {
-      currentState = { ...currentState, ...operation.extraData };
-    } else if (operation.type === 'removeProperties') {
-      currentState = Object.keys(currentState)
-        .filter((key) => !operation.keysToRemove.includes(key))
-        .reduce((newState, key) => {
-          newState[key] = currentState[key];
+    switch (operation.type) {
+      case 'addProperties':
+        currentState = { ...currentState, ...operation.extraData };
+        break;
+      case 'removeProperties':
+        currentState = Object.keys(currentState)
+          .filter((key) => !operation.keysToRemove.includes(key))
+          .reduce((newState, key) => {
+            newState[key] = currentState[key];
 
-          return newState;
-        }, {});
-    } else if (operation.type === 'clear') {
-      currentState = {};
+            return newState;
+          }, {});
+        break;
+      case 'clear':
+        currentState = {};
+        break;
+      default:
+        break;
     }
-
     result.push({ ...currentState });
   }
 
